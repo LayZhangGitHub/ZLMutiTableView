@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "ZLMutiTableView"
-  s.version      = "1.1.3"
+  s.version      = "1.1.4"
   s.summary      = "多表格 ZLMutiTableView."
 
   s.description  = <<-DESC
@@ -15,6 +15,6 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/githubforzhanglei/ZLMutiTableView.git", :tag => s.version.to_s }
 
   # s.ios.deployment_target = '8.0'
-  s.source_files  = "ZLMutiTableView/**/*"
+  s.source_files  = "ZLMutiTableView/*"
 
 end
