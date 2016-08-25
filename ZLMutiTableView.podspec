@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "ZLMutiTableView"
-  s.version      = "1.1.1"
+  s.version      = "1.1.2"
   s.summary      = "多表格 ZLMutiTableView."
 
   s.description  = <<-DESC
