@@ -3,7 +3,7 @@
 //  ZLMutiTableView
 //
 //  Created by ZhangLei on 16/8/23.
-//  Copyright © 2016年 Allone. All rights reserved.
+//  Copyright © 2016年 LayZhang. All rights reserved.
 //
 
 #import "ZLMutiSuperContentView.h"
@@ -147,19 +147,9 @@ static const CGFloat   defaultCellHeight       = 28.0f;
         cell = [self updateLeftTableViewCellWithIndex:indexPath];
     }
     
-    //    if (_selectArray != nil && [_selectArray count] != 0) {
-    //        if ([_selectArray containsObject:[NSNumber numberWithInteger:[indexPath row]]]) {
-    //            [cell.contentView setBackgroundColor:[UIColor grayColor]];
-    //        }
-    //    }
-//    if ([self.contentArray count] >= [indexPath row] - 1) {
-//        id cellObject = [self.contentArray objectAtIndex:[indexPath row]];
-//        if ([cellObject respondsToSelector:@selector(isSelected)] && [cellObject isSelected]) {
-//            [cell.contentView setBackgroundColor:[UIColor grayColor]];
-//        } else {
-//            [cell.contentView setBackgroundColor:[UIColor blackColor]];
-//        }
-//    }
+    if (!tableView) {
+        NSLog(@"*** get unknown err tableview !!! ***");
+    }
     
     return cell;
     
@@ -182,7 +172,7 @@ static const CGFloat   defaultCellHeight       = 28.0f;
     
     [self.contentTopView    setFrame:CGRectMake(0, 0, [self getScrollContentWidth], _topBarHeight)];
     [self.leftTopView       setFrame:CGRectMake(0, 0, [self getLeftColumWidth], _topBarHeight)];
-    // 这个就是这个意思
+    
     if ([[self.contentTopView subviews] count] > 0) {
         [[[self.contentTopView subviews] objectAtIndex:0] setFrame:self.contentTopView.bounds];
     }

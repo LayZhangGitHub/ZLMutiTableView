@@ -3,15 +3,26 @@
 //  ZLMutiTableView
 //
 //  Created by ZhangLei on 16/8/22.
-//  Copyright © 2016年 Allone. All rights reserved.
+//  Copyright © 2016年 LayZhang. All rights reserved.
 //
 
 #import "ZLPageView.h"
 #import "ZLSinglePageView.h"
 
 const CGFloat defaultTopTapHeight = 40.0f;
+const CGFloat defaultSliderHeight = 3.0f;
 
-@interface ZLPageView()<UIScrollViewDelegate>
+typedef NS_OPTIONS(NSUInteger, ZLMainScrollViewDragDirect) {
+    ZLMainScrollViewDragDirectMiddle = 1 << 0,
+    ZLMainScrollViewDragDirectLeft = 1 << 1,
+    ZLMainScrollViewDragDirectRight = 1 << 2
+};
+
+@interface ZLPageView()<UIScrollViewDelegate> {
+    CGFloat lastScrollOffset;
+    ZLMainScrollViewDragDirect dragDirect;
+    
+}
 
 // const value
 @property CGFloat topTapHeight;
@@ -22,6 +33,8 @@ const CGFloat defaultTopTapHeight = 40.0f;
 
 // values
 @property NSUInteger currentPageIndex;
+
+@property UIView *sliderView;
 
 @end
 
@@ -90,6 +103,11 @@ const CGFloat defaultTopTapHeight = 40.0f;
         
         [titleButton setFrame:buttonFrame];
     }
+    
+    self.sliderView = [[UIView alloc] initWithFrame:CGRectMake(0, _topTapHeight - defaultSliderHeight, tabWidth, defaultSliderHeight)];
+    self.sliderView.backgroundColor = [UIColor redColor];
+    self.sliderView.alpha = 0.8;
+    [self addSubview:self.sliderView];
 }
 
 - (void)layoutPageViews {
@@ -140,7 +158,7 @@ const CGFloat defaultTopTapHeight = 40.0f;
     [[_topTabButtonArray objectAtIndex:currentPage] setBackgroundColor:[UIColor blackColor]];
     [[[_topTabButtonArray objectAtIndex:self.currentPageIndex] titleLabel] setFont:[UIFont systemFontOfSize:18.0f]];
     [[[_topTabButtonArray objectAtIndex:currentPage] titleLabel] setFont:[UIFont boldSystemFontOfSize:20.0f]];
-    [_mainScrollView setContentOffset:CGPointMake(currentPage * scrollViewWidth, 0) animated:NO];
+    [_mainScrollView setContentOffset:CGPointMake(currentPage * scrollViewWidth, 0) animated:YES];
     
     [[self.pageViewArray objectAtIndex:self.currentPageIndex] pageUnSelect];
     [[self.pageViewArray objectAtIndex:currentPage] reloadPageData];
@@ -155,7 +173,6 @@ const CGFloat defaultTopTapHeight = 40.0f;
 
 - (void)layoutSubviews {
     [super layoutSubviews];
-    
     [self layoutPageViews];
     [self layoutTopTabButtons];
 }
@@ -201,6 +218,39 @@ const CGFloat defaultTopTapHeight = 40.0f;
     }
 }
 
+#pragma mark - scrollview delegate
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    lastScrollOffset = scrollView.contentOffset.x;
+    dragDirect = ZLMainScrollViewDragDirectMiddle;
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    
+    // pageview 预加载
+    if (scrollView.contentOffset.x - lastScrollOffset >= 0.0001) {
+        if (!(dragDirect & ZLMainScrollViewDragDirectRight)) {
+//            NSLog(@"right");
+            dragDirect |= ZLMainScrollViewDragDirectRight;
+            [[self.pageViewArray objectAtIndex:self.currentPageIndex + 1] reloadPageData];
+        }
+    } else if (scrollView.contentOffset.x - lastScrollOffset <= -0.0001) {
+        if (!(dragDirect & ZLMainScrollViewDragDirectLeft)) {
+//            NSLog(@"left");
+            dragDirect |= ZLMainScrollViewDragDirectLeft;
+            [[self.pageViewArray objectAtIndex:self.currentPageIndex -1] reloadPageData];
+        }
+    } else {
+//        NSLog(@"middle");
+    }
+    
+    CGFloat rate = self.sliderView.frame.size.width / scrollView.frame.size.width;
+    CGFloat x = scrollView.contentOffset.x * rate;
+    CGRect frame = self.sliderView.frame;
+    frame.origin.x = x;
+    self.sliderView.frame = frame;
+    
+}
+
 #pragma publicFunc
 - (void)setPageViewArray:(NSArray *)pageViewArray {
     _pageViewArray = pageViewArray;
@@ -210,7 +260,7 @@ const CGFloat defaultTopTapHeight = 40.0f;
         if ([view isKindOfClass:[ZLSinglePageView class]]) {
             ZLSinglePageView *singleView = (ZLSinglePageView *)view;
             [singleView setPageIndex:index];
-//            [self buildTopTapButton:[singleView titleButton]];
+            //            [self buildTopTapButton:[singleView titleButton]];
             [_topTabButtonArray addObject:[singleView titleButton]];
             [[singleView titleButton] addTarget:self
                                          action:@selector(topTabButtonClick:)

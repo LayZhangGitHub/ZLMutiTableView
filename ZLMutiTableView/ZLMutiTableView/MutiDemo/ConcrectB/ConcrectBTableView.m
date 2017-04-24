@@ -3,7 +3,7 @@
 //  ZLMutiTableView
 //
 //  Created by ZhangLei on 16/8/23.
-//  Copyright © 2016年 Allone. All rights reserved.
+//  Copyright © 2016年 LayZhang. All rights reserved.
 //
 
 #import "ConcrectBTableView.h"
@@ -48,19 +48,19 @@ static const CGFloat scrollViewContentWidth = 1024.0f;
     ConcrectBTableViewContentCell *cell = (ConcrectBTableViewContentCell *)[super getContentTableViewCell];
     [self.contentTopView addSubview:cell];
     
-    [cell.attribute0    setText:@"AttributeName0"];
-    [cell.attribute1    setText:@"AttributeName1"];
-    [cell.attribute2    setText:@"AttributeName2"];
-    [cell.attribute3    setText:@"AttributeName3"];
-    [cell.attribute4    setText:@"AttributeName4"];
+    [cell.attribute0    setText:@"字段0"];
+    [cell.attribute1    setText:@"字段1"];
+    [cell.attribute2    setText:@"字段2"];
+    [cell.attribute3    setText:@"字段3"];
+    [cell.attribute4    setText:@"字段4"];
 }
 
 - (void)initLeftColumNames {
     ConcrectBTableViewLeftCell *cell = (ConcrectBTableViewLeftCell *)[super getLeftTableViewCell];
     [self.leftTopView addSubview:cell];
-    [cell.attribute5    setText:@"AttributeName5"];
-    [cell.attribute6    setText:@"AttributeName6"];
-    [cell.attribute7    setText:@"AttributeName7"];
+    [cell.attribute5    setText:@"字段5"];
+    [cell.attribute6    setText:@"字段6"];
+    [cell.attribute7    setText:@"字段7"];
 }
 
 - (UITableViewCell *)updateContentTableViewCellWithIndex:(NSIndexPath *)indexPath {
