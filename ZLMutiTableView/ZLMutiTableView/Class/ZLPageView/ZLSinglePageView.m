@@ -10,10 +10,6 @@
 
 @implementation ZLSinglePageView
 
-@synthesize pageIndex = _pageIndex;
-
-@synthesize titleButton = _titleButton;
-
 - (id)init {
     if (self = [super init]) {
         [self initZLComponent];
@@ -36,7 +32,7 @@
 }
 
 - (void)initZLComponent {
-    self.titleButton = [[ZLPageTitleButton alloc] initWithStyle:ZLTitleButtonStyleGray];
+
 }
 
 /**
@@ -44,13 +40,6 @@
  */
 - (void)updateView {
     NSLog(@"SinglePageView updateView");
-}
-
-/**
- *  关于 titleButton的style, 可在ZLPageTitleButton 自定义
- */
-- (void)setPageTitle:(NSString *)title {
-    [self.titleButton setTitle:title forState:UIControlStateNormal];
 }
 
 /**

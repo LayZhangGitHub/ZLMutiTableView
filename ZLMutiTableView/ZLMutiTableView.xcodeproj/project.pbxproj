@@ -26,7 +26,6 @@
 		92E873DB1D6EA48600893E5F /* ConcrectCTableViewLeftCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 92E873D71D6EA48600893E5F /* ConcrectCTableViewLeftCell.m */; };
 		92E873DC1D6EA48600893E5F /* ConcrectCTableViewLeftCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 92E873D81D6EA48600893E5F /* ConcrectCTableViewLeftCell.xib */; };
 		92E873EA1D6EEDF600893E5F /* ZLMutiSuperContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 92E873DF1D6EEDF600893E5F /* ZLMutiSuperContentView.m */; };
-		92E873EB1D6EEDF600893E5F /* ZLPageTitleButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 92E873E41D6EEDF600893E5F /* ZLPageTitleButton.m */; };
 		92E873EC1D6EEDF600893E5F /* ZLPageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 92E873E61D6EEDF600893E5F /* ZLPageView.m */; };
 		92E873ED1D6EEDF600893E5F /* ZLSinglePageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 92E873E91D6EEDF600893E5F /* ZLSinglePageView.m */; };
 		92F3263A1D66BA1E0055E990 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 92F326391D66BA1E0055E990 /* main.m */; };
@@ -91,8 +90,6 @@
 		92E873DF1D6EEDF600893E5F /* ZLMutiSuperContentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZLMutiSuperContentView.m; sourceTree = "<group>"; };
 		92E873E01D6EEDF600893E5F /* ZLMutiSuperContentViewProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZLMutiSuperContentViewProtocol.h; sourceTree = "<group>"; };
 		92E873E21D6EEDF600893E5F /* ZLListenerProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZLListenerProtocol.h; sourceTree = "<group>"; };
-		92E873E31D6EEDF600893E5F /* ZLPageTitleButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZLPageTitleButton.h; sourceTree = "<group>"; };
-		92E873E41D6EEDF600893E5F /* ZLPageTitleButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZLPageTitleButton.m; sourceTree = "<group>"; };
 		92E873E51D6EEDF600893E5F /* ZLPageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZLPageView.h; sourceTree = "<group>"; };
 		92E873E61D6EEDF600893E5F /* ZLPageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZLPageView.m; sourceTree = "<group>"; };
 		92E873E71D6EEDF600893E5F /* ZLPageViewProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZLPageViewProtocol.h; sourceTree = "<group>"; };
@@ -225,8 +222,6 @@
 			isa = PBXGroup;
 			children = (
 				92E873E21D6EEDF600893E5F /* ZLListenerProtocol.h */,
-				92E873E31D6EEDF600893E5F /* ZLPageTitleButton.h */,
-				92E873E41D6EEDF600893E5F /* ZLPageTitleButton.m */,
 				92E873E51D6EEDF600893E5F /* ZLPageView.h */,
 				92E873E61D6EEDF600893E5F /* ZLPageView.m */,
 				92E873E71D6EEDF600893E5F /* ZLPageViewProtocol.h */,
@@ -442,7 +437,6 @@
 				920C0B2E1D6BFE43004D67C5 /* ConcrectBTableView.m in Sources */,
 				92F326401D66BA1E0055E990 /* ViewController.m in Sources */,
 				920C0B501D6C0201004D67C5 /* ConcrectATableViewLeftCell.m in Sources */,
-				92E873EB1D6EEDF600893E5F /* ZLPageTitleButton.m in Sources */,
 				920C0B471D6BFF51004D67C5 /* ConcrectC.m in Sources */,
 				92E873D11D6EA35B00893E5F /* ConcrectBTableViewLeftCell.m in Sources */,
 				92E873DB1D6EA48600893E5F /* ConcrectCTableViewLeftCell.m in Sources */,

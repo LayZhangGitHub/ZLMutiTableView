@@ -9,62 +9,42 @@
 #import "ZLPageView.h"
 #import "ZLSinglePageView.h"
 
-const CGFloat defaultTopTapHeight = 40.0f;
+//const CGFloat defaultTopTapHeight = 40.0f;
 const CGFloat defaultSliderHeight = 3.0f;
 
 typedef NS_OPTIONS(NSUInteger, ZLMainScrollViewDragDirect) {
-    ZLMainScrollViewDragDirectMiddle = 1 << 0,
-    ZLMainScrollViewDragDirectLeft = 1 << 1,
-    ZLMainScrollViewDragDirectRight = 1 << 2
+    ZLMainScrollViewDragDirectMiddle    = 1 << 0,
+    ZLMainScrollViewDragDirectLeft      = 1 << 1,
+    ZLMainScrollViewDragDirectRight     = 1 << 2
 };
 
 @interface ZLPageView()<UIScrollViewDelegate> {
-    CGFloat lastScrollOffset;
-    ZLMainScrollViewDragDirect dragDirect;
-    
+    CGFloat _lastScrollOffset;
+    ZLMainScrollViewDragDirect _dragDirect;
 }
 
-// const value
-@property CGFloat topTapHeight;
-
 // views
-@property UIScrollView *mainScrollView;
-@property NSMutableArray *topTabButtonArray;
+@property (nonatomic, strong) UIScrollView *mainScrollView;
+@property (nonatomic, strong) NSArray *topTabButtonArray;
+@property (nonatomic, strong) NSArray *pageViewArray;
+@property (nonatomic, strong) UIView *sliderView;
 
 // values
-@property NSUInteger currentPageIndex;
-
-@property UIView *sliderView;
+@property (nonatomic, assign) CGFloat topTapHeight;
+@property (nonatomic, assign) NSUInteger currentPageIndex;
 
 @end
 
 @implementation ZLPageView
 
-// const value
-@synthesize topTapHeight = _topTapHeight;
-
-// views
-@synthesize mainScrollView = _mainScrollView;
-@synthesize topTabButtonArray = _topTabButtonArray;
-
-// values
-@synthesize currentPageIndex = _currentPageIndex;
-
-- (id)initWithCoder:(NSCoder *)aDecoder {
-    if (self = [super initWithCoder:aDecoder]) {
-        [self initComponent];
-    }
-    return self;
-}
-
-- (id)init {
+- (instancetype)init {
     if (self = [super init]) {
         [self initComponent];
     }
     return self;
 }
 
-- (id)initWithFrame:(CGRect)frame {
+- (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         [self initComponent];
     }
@@ -74,7 +54,6 @@ typedef NS_OPTIONS(NSUInteger, ZLMainScrollViewDragDirect) {
 - (void)initComponent {
     [self setBackgroundColor:[UIColor blackColor]];
     _currentPageIndex = UINT8_MAX;
-    self.topTapHeight = defaultTopTapHeight;
     [self initScrollView];
 }
 
@@ -88,36 +67,88 @@ typedef NS_OPTIONS(NSUInteger, ZLMainScrollViewDragDirect) {
     [self addSubview:self.mainScrollView];
 }
 
-#pragma layout subviews
+#pragma mark - layout subviews
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    [self loadData];
+    [self layoutPageViews];
+    [self layoutTopTabButtons];
+}
+
+- (void)loadData {
+    
+    if (self.pageViewArray) {
+        return;
+    }
+    
+    // delegate 不可为空
+    if (!self.sourceDelegate) {
+        return;
+    }
+//    if (!self.actionDelegate) {
+//        return;
+//    }
+    
+    if ([self.sourceDelegate respondsToSelector:@selector(topTapTitleHeight)]) {
+        self.topTapHeight = [self.sourceDelegate topTapTitleHeight];
+    }
+    
+    if ([self.sourceDelegate respondsToSelector:@selector(arrayOfPageView)]) {
+        self.pageViewArray = [self.sourceDelegate arrayOfPageView];
+        for (UIView *pageView in self.pageViewArray) {
+            [self.mainScrollView addSubview:pageView];
+        }
+    }
+    
+    if ([self.sourceDelegate respondsToSelector:@selector(arrayOfTitleButton)]) {
+        self.topTabButtonArray = [self.sourceDelegate arrayOfTitleButton];
+        for (UIButton *pageBtn in self.topTabButtonArray) {
+            [pageBtn addTarget:self action:@selector(topTabButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+            [pageBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+            [self addSubview:pageBtn];
+        }
+    }
+    
+    if ([self.sourceDelegate respondsToSelector:@selector(scrollEnable)]) {
+        self.mainScrollView.scrollEnabled = [self.sourceDelegate scrollEnable];
+    }
+    
+    if (!self.sliderView) {
+        self.sliderView = [[UIView alloc] init];
+        self.sliderView.backgroundColor = [UIColor redColor];
+        self.sliderView.alpha = 0.8;
+        [self addSubview:self.sliderView];
+    }
+    
+}
+
 - (void)layoutTopTabButtons {
     CGFloat scrollViewWidth = CGRectGetWidth(self.frame);
     CGFloat tabWidth = scrollViewWidth / self.pageViewArray.count;
     for (int i = 0; i < self.pageViewArray.count; i++) {
-        //        UIButton *button = [_topTabButtonArray objectAtIndex:i];
-        UIButton *titleButton = [(ZLSinglePageView *)[self.pageViewArray objectAtIndex:i] titleButton];
-        CGRect buttonFrame = titleButton.bounds;
-        buttonFrame.size.width = tabWidth;
-        CGFloat x = i * tabWidth;
-        buttonFrame.origin.x = x;
-        buttonFrame.size.height = _topTapHeight;
+        UIButton *button = [_topTabButtonArray objectAtIndex:i];
         
-        [titleButton setFrame:buttonFrame];
+        CGFloat x = i * tabWidth;
+        CGFloat y = 2.0f;
+        CGFloat height = _topTapHeight - y;
+        CGFloat width = tabWidth;
+        
+        [button setFrame:CGRectMake(x, y, width, height)];
     }
-    
-    self.sliderView = [[UIView alloc] initWithFrame:CGRectMake(0, _topTapHeight - defaultSliderHeight, tabWidth, defaultSliderHeight)];
-    self.sliderView.backgroundColor = [UIColor redColor];
-    self.sliderView.alpha = 0.8;
-    [self addSubview:self.sliderView];
+    [self.sliderView setFrame:CGRectMake(0, _topTapHeight - defaultSliderHeight, tabWidth, defaultSliderHeight)];
 }
 
 - (void)layoutPageViews {
-    CGFloat scrollViewWidth = CGRectGetWidth(self.frame);
-    CGFloat scrollViewHeight = CGRectGetHeight(self.frame) - self.topTapHeight;
+    CGFloat scrollViewWidth     = CGRectGetWidth(self.frame);
+    CGFloat scrollViewHeight    = CGRectGetHeight(self.frame) - self.topTapHeight;
     for (int i = 0; i < self.pageViewArray.count; i++) {
         UIView *tempView = [self.pageViewArray objectAtIndex:i];
         [tempView setFrame:CGRectMake(i * scrollViewWidth, 0, scrollViewWidth, scrollViewHeight)];
         //        NSLog(@"%f...%@", ScrollViewHeight, [tempView class]);
     }
+    
+    [_mainScrollView setFrame:CGRectMake(0, _topTapHeight, scrollViewWidth, scrollViewHeight - _topTapHeight)];
+    [_mainScrollView setContentSize:CGSizeMake(scrollViewWidth * self.pageViewArray.count, scrollViewHeight - _topTapHeight)];
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
@@ -154,8 +185,8 @@ typedef NS_OPTIONS(NSUInteger, ZLMainScrollViewDragDirect) {
     
     CGFloat scrollViewWidth = CGRectGetWidth(self.frame);
     
-    [[_topTabButtonArray objectAtIndex:self.currentPageIndex] setBackgroundColor:[UIColor grayColor]];
-    [[_topTabButtonArray objectAtIndex:currentPage] setBackgroundColor:[UIColor blackColor]];
+    [[_topTabButtonArray objectAtIndex:self.currentPageIndex] setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+    [[_topTabButtonArray objectAtIndex:currentPage] setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [[[_topTabButtonArray objectAtIndex:self.currentPageIndex] titleLabel] setFont:[UIFont systemFontOfSize:18.0f]];
     [[[_topTabButtonArray objectAtIndex:currentPage] titleLabel] setFont:[UIFont boldSystemFontOfSize:20.0f]];
     [_mainScrollView setContentOffset:CGPointMake(currentPage * scrollViewWidth, 0) animated:YES];
@@ -171,76 +202,26 @@ typedef NS_OPTIONS(NSUInteger, ZLMainScrollViewDragDirect) {
     }
 }
 
-- (void)layoutSubviews {
-    [super layoutSubviews];
-    [self layoutPageViews];
-    [self layoutTopTabButtons];
-}
-
-
-#pragma setDelegate
-- (void)setSourceDelegate:(id<ZLPageViewDataSourceProtocol>)sourceDelegate {
-    if (sourceDelegate == nil) {
-        _sourceDelegate = nil;
-    }
-    
-    if (_sourceDelegate != sourceDelegate) {
-        _sourceDelegate = sourceDelegate;
-        
-        [self resetComponent];
-        [self setScrollEnable];
-    }
-}
-
-- (void)setActionDelegate:(id<ZLPageViewActionProtocol>)actionDelegate {
-    if (actionDelegate == nil) {
-        _actionDelegate = nil;
-    }
-    
-    if (_actionDelegate != actionDelegate) {
-        _actionDelegate = actionDelegate;
-    }
-}
-
-- (void)resetComponent {
-    if (_sourceDelegate != nil && [_sourceDelegate respondsToSelector:@selector(topTapTitleHeightAtPageView:)]) {
-        _topTapHeight = [_sourceDelegate topTapTitleHeightAtPageView:self];
-    }
-    
-    if (_sourceDelegate != nil && [_sourceDelegate respondsToSelector:@selector(arrayOfCustomPageViewAtPageView:)]) {
-        self.pageViewArray = [_sourceDelegate arrayOfCustomPageViewAtPageView:self];
-    }
-}
-
-- (void)setScrollEnable {
-    if (_sourceDelegate != nil && [_sourceDelegate respondsToSelector:@selector(scrollEnable)]) {
-        [_mainScrollView setScrollEnabled:[_sourceDelegate scrollEnable]];
-    }
-}
 
 #pragma mark - scrollview delegate
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
-    lastScrollOffset = scrollView.contentOffset.x;
-    dragDirect = ZLMainScrollViewDragDirectMiddle;
+    _lastScrollOffset = scrollView.contentOffset.x;
+    _dragDirect = ZLMainScrollViewDragDirectMiddle;
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     
     // pageview 预加载
-    if (scrollView.contentOffset.x - lastScrollOffset >= 0.0001) {
-        if (!(dragDirect & ZLMainScrollViewDragDirectRight)) {
-//            NSLog(@"right");
-            dragDirect |= ZLMainScrollViewDragDirectRight;
+    if (scrollView.contentOffset.x - _lastScrollOffset >= 0.0001) {
+        if (!(_dragDirect & ZLMainScrollViewDragDirectRight)) {
+            _dragDirect |= ZLMainScrollViewDragDirectRight;
             [[self.pageViewArray objectAtIndex:self.currentPageIndex + 1] reloadPageData];
         }
-    } else if (scrollView.contentOffset.x - lastScrollOffset <= -0.0001) {
-        if (!(dragDirect & ZLMainScrollViewDragDirectLeft)) {
-//            NSLog(@"left");
-            dragDirect |= ZLMainScrollViewDragDirectLeft;
+    } else if (scrollView.contentOffset.x - _lastScrollOffset <= -0.0001) {
+        if (!(_dragDirect & ZLMainScrollViewDragDirectLeft)) {
+            _dragDirect |= ZLMainScrollViewDragDirectLeft;
             [[self.pageViewArray objectAtIndex:self.currentPageIndex -1] reloadPageData];
         }
-    } else {
-//        NSLog(@"middle");
     }
     
     CGFloat rate = self.sliderView.frame.size.width / scrollView.frame.size.width;
@@ -248,40 +229,15 @@ typedef NS_OPTIONS(NSUInteger, ZLMainScrollViewDragDirect) {
     CGRect frame = self.sliderView.frame;
     frame.origin.x = x;
     self.sliderView.frame = frame;
-    
 }
 
 #pragma publicFunc
-- (void)setPageViewArray:(NSArray *)pageViewArray {
-    _pageViewArray = pageViewArray;
-    _topTabButtonArray = [[NSMutableArray alloc] init];
-    for (int index = 0; index < pageViewArray.count; index ++) {
-        UIView *view = [pageViewArray objectAtIndex:index];
-        if ([view isKindOfClass:[ZLSinglePageView class]]) {
-            ZLSinglePageView *singleView = (ZLSinglePageView *)view;
-            [singleView setPageIndex:index];
-            //            [self buildTopTapButton:[singleView titleButton]];
-            [_topTabButtonArray addObject:[singleView titleButton]];
-            [[singleView titleButton] addTarget:self
-                                         action:@selector(topTabButtonClick:)
-                               forControlEvents:UIControlEventTouchUpInside];
-            [self addSubview:[singleView titleButton]];
-            [_mainScrollView addSubview:singleView];
-        }
-    }
-    
-    CGFloat scrollViewWidth = CGRectGetWidth(self.frame);
-    CGFloat scrollViewHeight = CGRectGetHeight(self.frame);
-    
-    [_mainScrollView setFrame:CGRectMake(0, _topTapHeight, scrollViewWidth, scrollViewHeight - _topTapHeight)];
-    [_mainScrollView setContentSize:CGSizeMake(scrollViewWidth * self.pageViewArray.count, scrollViewHeight - _topTapHeight)];
-}
 
 - (void)removeAllListener {
     for (ZLSinglePageView *view in self.pageViewArray) {
         [view pageUnSelect];
     }
-    [[_topTabButtonArray objectAtIndex:self.currentPageIndex] setBackgroundColor:[UIColor grayColor]];
+    [[_topTabButtonArray objectAtIndex:self.currentPageIndex] setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
     [[[_topTabButtonArray objectAtIndex:self.currentPageIndex] titleLabel] setFont:[UIFont systemFontOfSize:18.0f]];
     self.currentPageIndex = UINT8_MAX;
 }

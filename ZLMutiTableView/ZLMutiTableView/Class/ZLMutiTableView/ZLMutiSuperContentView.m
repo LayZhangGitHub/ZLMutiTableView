@@ -39,7 +39,6 @@ static const CGFloat   defaultCellHeight       = 28.0f;
 - (id)init {
     if (self = [super init]) {
         [self initComponent];
-        //        _currentIndex = -1;
     }
     return self;
 }
@@ -47,7 +46,6 @@ static const CGFloat   defaultCellHeight       = 28.0f;
 - (id)initWithCoder:(NSCoder *)aDecoder {
     if (self = [super initWithCoder:aDecoder]) {
         [self initComponent];
-        //        _currentIndex = -1;
     }
     return self;
 }
@@ -152,9 +150,6 @@ static const CGFloat   defaultCellHeight       = 28.0f;
     }
     
     return cell;
-    
-    //    NSLog(@"*** get unknown err tableview !!! ***");
-    //    return nil;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{

@@ -16,9 +16,10 @@
 
 @protocol ZLPageViewDataSourceProtocol <NSObject>
 
-//- (NSUInteger)countOfPageViews;
-- (CGFloat)topTapTitleHeightAtPageView:(ZLPageView *)pageView;
-- (NSArray *)arrayOfCustomPageViewAtPageView:(ZLPageView *)pageView;
+- (CGFloat)topTapTitleHeight;
+
+- (NSArray *)arrayOfPageView;
+- (NSArray *)arrayOfTitleButton;
 
 - (Boolean)scrollEnable;
 

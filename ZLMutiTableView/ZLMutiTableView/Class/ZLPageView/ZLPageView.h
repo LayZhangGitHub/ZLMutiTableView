@@ -18,7 +18,7 @@
 @property (nonatomic, weak) id<ZLPageViewDataSourceProtocol> sourceDelegate;
 @property (nonatomic, weak) id<ZLPageViewActionProtocol> actionDelegate;
 
-@property (nonatomic) NSArray *pageViewArray;
+
 
 - (void)setCurrentPage:(NSUInteger)index;
 - (void)reclickCurrentPage;

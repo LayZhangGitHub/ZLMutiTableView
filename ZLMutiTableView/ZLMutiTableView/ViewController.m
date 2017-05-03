@@ -50,11 +50,29 @@
     ZLSinglePageView *pageA = [[ConcrectATableView alloc] init];
     ZLSinglePageView *pageB = [[ConcrectBTableView alloc] init];
     ZLSinglePageView *pageC = [[ConcrectCTableView alloc] init];
-    [pageA setPageTitle:@"pageA"];
-    [pageB setPageTitle:@"pageB"];
-    [pageC setPageTitle:@"pageC"];
     [pageB setBackgroundColor:[UIColor redColor]];
     return @[pageA, pageB, pageC];
+}
+- (CGFloat)topTapTitleHeight {
+    return 40.0f;
+}
+
+- (NSArray *)arrayOfPageView {
+    ZLSinglePageView *pageA = [[ConcrectATableView alloc] init];
+    ZLSinglePageView *pageB = [[ConcrectBTableView alloc] init];
+    ZLSinglePageView *pageC = [[ConcrectCTableView alloc] init];
+    [pageB setBackgroundColor:[UIColor redColor]];
+    return @[pageA, pageB, pageC];
+}
+
+- (NSArray *)arrayOfTitleButton {
+    UIButton *btnA = [[UIButton alloc] init];
+    UIButton *btnB = [[UIButton alloc] init];
+    UIButton *btnC = [[UIButton alloc] init];
+    [btnA setTitle:@"A" forState:UIControlStateNormal];
+    [btnB setTitle:@"B" forState:UIControlStateNormal];
+    [btnC setTitle:@"C" forState:UIControlStateNormal];
+    return @[btnA, btnB, btnC];
 }
 
 - (Boolean)scrollEnable {

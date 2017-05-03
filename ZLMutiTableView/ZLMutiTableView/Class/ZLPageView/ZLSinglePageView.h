@@ -8,7 +8,6 @@
 
 #import <UIKit/UIKit.h>
 #import "ZLListenerProtocol.h"
-#import "ZLPageTitleButton.h"
 
 /**
  *  ZLPageView 的单个页面的抽象类
@@ -16,14 +15,9 @@
 
 @interface ZLSinglePageView : UIView<ZLListenerProtocol>
 
-//@property (nonatomic) NSString *title;
-@property NSUInteger pageIndex;
+@property (nonatomic, assign) NSUInteger pageIndex;
 
-@property ZLPageTitleButton *titleButton;
-
-- (void)setPageTitle:(NSString *)title;
-
-#pragma abstractFunc
+#pragma abstract Func
 //- (void)addListener;
 //- (void)removeListener;
 
